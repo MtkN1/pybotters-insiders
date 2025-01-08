@@ -4,7 +4,8 @@ EXPERIMENTAL REPOSITORY FOR PYBOTTERS V2
 ## Contributing
 
 - Install `uv`
-  > https://docs.astral.sh/uv/getting-started/installation/
+
+  https://docs.astral.sh/uv/getting-started/installation/
 - Install dependencies
   ```console
   $ uv sync
@@ -22,5 +23,7 @@ EXPERIMENTAL REPOSITORY FOR PYBOTTERS V2
   $ uv run ruff format
   ```
 - Run type checker
-  > [!IMPORTANT]
-  > Static code analysis is provided by the VS Code Pylance extension. To run in the CLI, there are `pyright` (Official, Node.js) and `pyright-python` (Third-paty, Python), but be careful to [synchronize versions with Pylance](https://github.com/microsoft/pylance-release/blob/main/USING_WITH_PYRIGHT.md#pyright-version-and-pylances-underlying-pyright-version-are-different).
+
+  Static code analysis is provided from the VS Code Pylance extension.
+> [!IMPORTANT]
+> To run in the CLI, there are [`pyright`](https://github.com/microsoft/pyright) (First-party, Node.js) and [`pyright-python`](https://github.com/RobertCraigie/pyright-python) (Third-paty, Python), but be careful to [synchronize versions with Pylance](https://github.com/microsoft/pylance-release/blob/main/USING_WITH_PYRIGHT.md#pyright-version-and-pylances-underlying-pyright-version-are-different).
