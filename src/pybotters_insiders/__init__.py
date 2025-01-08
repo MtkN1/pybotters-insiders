@@ -3,4 +3,4 @@
 
 def hello() -> str:
     """Hello, world."""
-    return "Hello from pybotters-insiders!"
+    return "Hello from pybotters-insiders?"
