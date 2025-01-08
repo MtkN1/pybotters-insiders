@@ -1,2 +1,2 @@
-# pybotters-v2-bitbank
+# pybotters-insiders
 EXPERIMENTAL REPOSITORY FOR PYBOTTERS V2
