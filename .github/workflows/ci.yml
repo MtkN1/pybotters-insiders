@@ -10,10 +10,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
 
       - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
 
       - run: uv run --group test pytest
 
@@ -41,3 +46,12 @@ jobs:
       - run: echo "$PWD/.venv/bin" >> $GITHUB_PATH
 
       - uses: jakebailey/pyright-action@v2
+
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+
+      - run: uv build
