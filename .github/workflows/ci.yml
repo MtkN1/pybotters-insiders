@@ -24,10 +24,9 @@ jobs:
 
       - uses: astral-sh/setup-uv@v5
 
-      - run: uv run --group lint ruff check --output-format=github
-        if: always()
-
       - run: uv run --group lint ruff format --check
+
+      - run: uv run --group lint ruff check --output-format=github
         if: always()
 
   typecheck:
