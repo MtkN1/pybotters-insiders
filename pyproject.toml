@@ -1,0 +1,71 @@
+[project]
+name = "pybotters-insiders"
+version = "0.1.0"
+description = "EXPERIMENTAL PACKAGE FOR PYBOTTERS V2"
+readme = "README.md"
+authors = [
+    { name = "MtkN1", email = "51289448+MtkN1@users.noreply.github.com" },
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+test = [
+    "pytest>=8.3.4",
+    "pytest-cov>=6.0.0",
+]
+lint = [
+    "ruff>=0.8.6",
+]
+dev = [
+    {include-group = "test"},
+    {include-group = "lint"},
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    # https://docs.astral.sh/ruff/linter/#rule-selection
+    "D203",
+    "D213",
+    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "COM812",
+    "COM819",
+    "ISC001",
+    "ISC002",
+    "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101", # https://docs.astral.sh/ruff/rules/assert/
+]
+
+[tool.pyright]
+include = ["src", "tests"]
+
+# https://github.com/microsoft/pylance-release/blob/20f3f9ddbf1583e07009cedac1a13213ffa34db6/USING_WITH_PYRIGHT.md#settings-differences
+autoSearchPaths = false
+extraPaths = []
+typeCheckingMode = "strict"
+reportShadowedImports = "warning"
