@@ -1,10 +1,6 @@
 """EXPERIMENTAL PACKAGE FOR PYBOTTERS V2."""
 
-import os
 
-
-def hello() -> bytes:
+def hello() -> str:
     """Hello, world."""
-    return (
-        "Hello from ... Who?"
-    )
+    return "Hello from pybotters-insiders!"
