@@ -39,13 +39,6 @@ jobs:
 
       - run: uv sync --group test
 
-      - id: set-python-path
-        name: Set `python-path`
-        run: |
-          python_path=$(uv run which python)
-          echo "python-path=$(python_path)" | tee -a "$GITHUB_OUTPUT"
+      - run: echo "$PWD/.venv/bin" >> $GITHUB_PATH
 
       - uses: jakebailey/pyright-action@v2
-        with:
-          pylance-version: latest-release
-          python-path: ${{ steps.set-python-path.outputs.python-path }}
