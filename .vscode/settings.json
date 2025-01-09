@@ -1,0 +1,18 @@
+{
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true
+    },
+    "python.analysis.diagnosticMode": "workspace",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+    "python.testing.pytestArgs": [
+        "--color=yes",
+        "--verbosity=2"
+    ],
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "ruff.enable": true
+}
