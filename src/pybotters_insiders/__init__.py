@@ -1,6 +1,6 @@
 """EXPERIMENTAL PACKAGE FOR PYBOTTERS V2."""
 
 
-def hello() -> str:
-    """Hello, world."""
+def hello() -> bytes:
+    """Hello, world"""
     return "Hello from pybotters-insiders!"
