@@ -2,62 +2,140 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  test:
-    runs-on: ubuntu-24.04
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.13t"]
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: astral-sh/setup-uv@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Run tests
-        run: uv run --group test pytest
-
   lint:
     runs-on: ubuntu-24.04
+    env:
+      UV_LOCKED: "1"
+      UV_NO_SYNC: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
 
-      - name: Run linters
-        run: |
-          uv run --group lint ruff check --output-format=github || exit_status=1
-          uv run --group lint ruff format --check || exit_status=1
+      - run: uv sync --only-group lint
 
-          exit "${exit_status:-0}"
+      - run: uv run -- ruff check --output-format=github
 
-  typecheck:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: astral-sh/setup-uv@v5
-
-      - name: Set up Python environment
-        run: |
-          uv sync --group test
-          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
-
-      - uses: jakebailey/pyright-action@v2
+      - run: uv run -- ruff format --check
 
   build:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
 
-      - name: Run build
-        run: uv build
+      - run: uv build
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist
+
+  typecheck:
+    runs-on: ubuntu-24.04
+    env:
+      UV_LOCKED: "1"
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - run: uv sync --no-default-groups --group test
+
+      - run: npm ci
+
+      - run: echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
+      - run: echo "$PWD/node_modules/.bin" >> "$GITHUB_PATH"
+
+      - uses: jakebailey/pyright-action@v3
+        with:
+          version: PATH
+
+  test:
+    runs-on: ubuntu-24.04
+    env:
+      UV_LOCKED: "1"
+      UV_NO_SYNC: "1"
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+
+      - run: uv sync --no-default-groups --group test --group ci
+
+      - run: uv run -- coverage run -m pytest
+
+      - run: mv .coverage ".coverage.${{ matrix.python-version }}"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: coverage-${{ matrix.python-version }}
+          path: .coverage.${{ matrix.python-version }}
+          include-hidden-files: true
+
+  report:
+    runs-on: ubuntu-24.04
+    needs: test
+    env:
+      UV_LOCKED: "1"
+      UV_NO_SYNC: "1"
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-*
+          merge-multiple: true
+
+      - run: uv sync --only-group test
+
+      - name: coverage report
+        run: |
+          uv run -- coverage combine
+
+          set +e
+          uv run -- coverage report --format=markdown | tee -a "$GITHUB_STEP_SUMMARY"
+          uv run -- coverage html
+          set -e
+
+          uv run -- coverage report
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: htmlcov
+          path: htmlcov
