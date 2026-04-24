@@ -10,36 +10,74 @@ requires-python = ">=3.10"
 dependencies = []
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.7.19,<1.0.0"]
+build-backend = "uv_build"
 
 [dependency-groups]
-test = [
-    "pytest>=8.3.4",
-    "pytest-cov>=6.0.0",
-    "pytest-github-actions-annotate-failures>=0.2.0",
-]
-lint = [
-    "ruff>=0.8.6",
+ci = [
+    "pytest-github-actions-annotate-failures>=0.4.0",
 ]
 dev = [
-    {include-group = "test"},
-    {include-group = "lint"},
+    { include-group = "ide" },
+    { include-group = "lint" },
+    { include-group = "test" },
+]
+ide = [
+    "pytest-cov>=7.1.0",
+]
+lint = [
+    "ruff>=0.15.0",
+]
+test = [
+    "coverage[toml]>=7.13.0",
+    "pytest>=9.0.0",
 ]
 
-[tool.pytest.ini_options]
+[tool.coverage.run]
+branch = true
+source = ["src", "tests"]
+dynamic_context = "test_function"
+
+[tool.coverage.report]
+exclude_also = [
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
+fail_under = 100
+show_missing = true
+skip_empty = true
+skip_covered = true
+
+[tool.coverage.html]
+skip_empty = true
+show_contexts = true
+
+[tool.pyright]
+typeCheckingMode = "strict"
+include = ["src", "tests"]
+
+[tool.pytest]
 testpaths = ["tests"]
+verbosity_assertions = "2"
+verbosity_subtests = "1"
+verbosity_test_cases = "2"
 
 [tool.ruff]
 include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py"]
 
+[tool.ruff.format]
+docstring-code-format = true
+
 [tool.ruff.lint]
-select = ["ALL"]
+explicit-preview-rules = true
+future-annotations = true
+select = [
+    "ALL",
+    "PLC2701",
+]
 ignore = [
-    # https://docs.astral.sh/ruff/linter/#rule-selection
     "D203",
     "D213",
-    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
     "W191",
     "E111",
     "E114",
@@ -52,21 +90,11 @@ ignore = [
     "Q003",
     "COM812",
     "COM819",
-    "ISC001",
-    "ISC002",
-    "E501",
 ]
+preview = true
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = [
-    "S101", # https://docs.astral.sh/ruff/rules/assert/
+    "S101",
+    "PLR2004",
 ]
-
-[tool.pyright]
-include = ["src", "tests"]
-
-# https://github.com/microsoft/pylance-release/blob/20f3f9ddbf1583e07009cedac1a13213ffa34db6/USING_WITH_PYRIGHT.md#settings-differences
-autoSearchPaths = false
-extraPaths = []
-typeCheckingMode = "strict"
-reportShadowedImports = "warning"

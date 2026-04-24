@@ -3,27 +3,26 @@ EXPERIMENTAL REPOSITORY FOR PYBOTTERS V2
 
 ## Contributing
 
-- Install `uv`
+### Requirements
 
-  https://docs.astral.sh/uv/getting-started/installation/
-- Install dependencies
-  ```console
-  $ uv sync
-  ```
-- Run tests
-  ```console
-  $ uv run pytest
-  ```
-- Run linter
-  ```console
-  $ uv run ruff check
-  ```
-- Run formatter
-  ```console
-  $ uv run ruff format
-  ```
-- Run type checker
+- Python 3.10+
+- uv
+- Node.js (for `pyright`)
 
-  Static code analysis is provided from the VS Code Pylance extension.
-> [!IMPORTANT]
-> To run in the CLI, there are [`pyright`](https://github.com/microsoft/pyright) (First-party, Node.js) and [`pyright-python`](https://github.com/RobertCraigie/pyright-python) (Third-paty, Python), but be careful to [synchronize versions with Pylance](https://github.com/microsoft/pylance-release/blob/main/USING_WITH_PYRIGHT.md#pyright-version-and-pylances-underlying-pyright-version-are-different).
+### Setup
+
+- Install Python dependencies: `uv sync`
+- Install Node.js dependencies: `npm install`
+
+### Checks
+
+- Run the test suite: `uv run -- pytest`
+- Run the test suite with coverage: `uv run -- coverage run -m pytest`
+- Run tests with coverage for all supported Python versions:
+  1. `for v in 3.10 3.11 3.12 3.13 3.14; do uv run -p "$v" --isolated -- coverage run -p -m pytest; done`
+  2. `uv run -- coverage combine`
+- Show the coverage report: `uv run -- coverage report`
+- Run Ruff lint checks: `uv run -- ruff check`
+- Check formatting with Ruff: `uv run -- ruff format --check`
+- Run Pyright type checks: `uv run -- npm exec --no -- pyright`
+- Build the package: `uv build`

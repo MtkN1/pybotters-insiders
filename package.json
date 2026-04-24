@@ -1,0 +1,6 @@
+{
+  "name": "pybotters-insiders",
+  "devDependencies": {
+    "pyright": "^1.1.0"
+  }
+}
